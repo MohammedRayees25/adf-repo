@@ -1,0 +1,6 @@
+{
+	"name": "LocalIR",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}

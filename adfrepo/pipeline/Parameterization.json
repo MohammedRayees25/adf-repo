@@ -1,0 +1,234 @@
+{
+	"name": "Parameterization",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "Config",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "servername",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "servername",
+					"value": {
+						"value": "@activity('Lookup1').output.firstRow.destination.serverName",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "database",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "servername",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "database",
+					"value": {
+						"value": "@activity('Lookup1').output.firstRow.destination.databaseName",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "tablename",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "database",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "tablename",
+					"value": {
+						"value": "@activity('Lookup1').output.firstRow.destination.tableName",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "filename",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "tablename",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "filename",
+					"value": {
+						"value": "@activity('Lookup1').output.firstRow.source.fileName",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "container",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "filename",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "container",
+					"value": {
+						"value": "@activity('Lookup1').output.firstRow.source.adlspath",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Data flow1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "container",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DataFlow_Parameterization",
+						"type": "DataFlowReference",
+						"parameters": {
+							"Container": {
+								"value": "'@{variables('container')}'",
+								"type": "Expression"
+							},
+							"filename": {
+								"value": "'@{variables('filename')}'",
+								"type": "Expression"
+							}
+						},
+						"datasetParameters": {
+							"sink1": {
+								"servername": {
+									"value": "@variables('servername')",
+									"type": "Expression"
+								},
+								"database": {
+									"value": "@variables('database')",
+									"type": "Expression"
+								},
+								"tablename": {
+									"value": "@variables('tablename')",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"variables": {
+			"servername": {
+				"type": "String"
+			},
+			"database": {
+				"type": "String"
+			},
+			"tablename": {
+				"type": "String"
+			},
+			"filename": {
+				"type": "String"
+			},
+			"container": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-12-30T06:41:45Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

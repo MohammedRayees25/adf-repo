@@ -1,0 +1,134 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Customer_Data",
+						"type": "DatasetReference"
+					},
+					"name": "CustomerData"
+				},
+				{
+					"dataset": {
+						"referenceName": "CustomerPurchase",
+						"type": "DatasetReference"
+					},
+					"name": "CustomerPurchase"
+				},
+				{
+					"dataset": {
+						"referenceName": "Location",
+						"type": "DatasetReference"
+					},
+					"name": "Location"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Parquet1",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DerivedColumn1"
+				},
+				{
+					"name": "FilteringAgeActive"
+				},
+				{
+					"name": "AggregateTransformation"
+				},
+				{
+					"name": "LookupTransformation"
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "sort1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "surrogateKey1"
+				},
+				{
+					"name": "CustomerSegment"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CustomerID as integer,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          Age as integer,",
+				"          IsActive as boolean,",
+				"          {LocationID } as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> CustomerData",
+				"source(output(",
+				"          CustomerID as integer,",
+				"          Month as string,",
+				"          PurchaseAmount as double",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> CustomerPurchase",
+				"source(output(",
+				"          LocationID as integer,",
+				"          Region as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> Location",
+				"CustomerData derive(Fullname = concat(FirstName, ' ',LastName)) ~> DerivedColumn1",
+				"DerivedColumn1 filter(equals(IsActive,true()) && greaterOrEqual(Age,18)) ~> FilteringAgeActive",
+				"CustomerPurchase aggregate(groupBy(CustomerID),",
+				"     TotalSpend = sum(PurchaseAmount)) ~> AggregateTransformation",
+				"FilteringAgeActive, Location lookup({LocationID } == LocationID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LookupTransformation",
+				"LookupTransformation, CustomerSegment join(CustomerData@CustomerID == AggregateTransformation@CustomerID,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 sort(asc(Fullname, true)) ~> sort1",
+				"sort1 select(mapColumn(",
+				"          CustomerID = CustomerData@CustomerID,",
+				"          FirstName,",
+				"          LastName,",
+				"          Age,",
+				"          IsActive,",
+				"          Fullname,",
+				"          Region,",
+				"          PurchaseAmount = TotalSpend",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 keyGenerate(output(CustomerDataKey as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey1",
+				"AggregateTransformation derive(CustomerSegment = iif(TotalSpend > 5000, 'High Spender', iif(TotalSpend >= 1000, 'Medium Spender', 'Low Spender'))) ~> CustomerSegment",
+				"surrogateKey1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}

@@ -1,0 +1,51 @@
+{
+	"name": "AzureSqlTable1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Movie_Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Title",
+				"type": "varchar"
+			},
+			{
+				"name": "Industry",
+				"type": "varchar"
+			},
+			{
+				"name": "Release_Year",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "IMDB_Rating",
+				"type": "decimal",
+				"precision": 3,
+				"scale": 1
+			},
+			{
+				"name": "Studio",
+				"type": "varchar"
+			},
+			{
+				"name": "Language_Id",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Movies"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

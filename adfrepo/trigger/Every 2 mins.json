@@ -1,0 +1,25 @@
+{
+	"name": "Every 2 mins",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "Blob_to_Azure_SQL",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 2,
+				"startTime": "2024-12-18T11:25:00",
+				"endTime": "2024-12-18T11:30:00",
+				"timeZone": "India Standard Time"
+			}
+		}
+	}
+}

@@ -1,0 +1,143 @@
+{
+	"name": "Blob_to_Azure_SQL",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "truncate table movies",
+						"writeBehavior": "upsert",
+						"upsertSettings": {
+							"useTempDB": true,
+							"keys": [
+								"Movie_Id"
+							]
+						},
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "Movie_Id",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Movie_Id"
+								}
+							},
+							{
+								"source": {
+									"name": "title",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Title"
+								}
+							},
+							{
+								"source": {
+									"name": "Industry",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Industry"
+								}
+							},
+							{
+								"source": {
+									"name": "release_year",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Release_Year"
+								}
+							},
+							{
+								"source": {
+									"name": "imdb_rating",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "IMDB_Rating"
+								}
+							},
+							{
+								"source": {
+									"name": "studio",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Studio"
+								}
+							},
+							{
+								"source": {
+									"name": "language_id",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Language_Id"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DelimitedText1",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AzureSqlTable1",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2024-12-31T08:59:19Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

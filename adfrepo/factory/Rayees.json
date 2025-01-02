@@ -1,0 +1,9 @@
+{
+	"name": "Rayees",
+	"location": "centralus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "ab191073-18e7-4921-8462-e1a520de88b5",
+		"tenantId": "818467cf-44b9-45a5-a41a-1ef924fcd795"
+	}
+}
