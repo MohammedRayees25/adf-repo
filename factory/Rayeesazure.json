@@ -1,0 +1,9 @@
+{
+	"name": "Rayeesazure",
+	"location": "centralus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "68e36d03-df28-4cde-8717-730651da6a23",
+		"tenantId": "818467cf-44b9-45a5-a41a-1ef924fcd795"
+	}
+}
