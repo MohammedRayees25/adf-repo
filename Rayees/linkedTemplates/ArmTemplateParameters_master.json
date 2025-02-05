@@ -1,0 +1,72 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "Rayees"
+		},
+		"AzureBlobStorage1_connectionString": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
+		"AzureDatabricks1_accessToken": {
+			"value": ""
+		},
+		"AzureSqlDatabase1_password": {
+			"value": ""
+		},
+		"FormulaF1_accessToken": {
+			"value": ""
+		},
+		"Parametrerized_SQL_password": {
+			"value": ""
+		},
+		"SqlServer1_password": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://rayeescloud1.dfs.core.windows.net/"
+		},
+		"AzureDatabricks1_properties_typeProperties_existingClusterId": {
+			"value": "0113-075944-ah9bbo5z"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_server": {
+			"value": "vasanth0103.database.windows.net"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_database": {
+			"value": "vasanthdb"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_userName": {
+			"value": "vasanth"
+		},
+		"FormulaF1_properties_typeProperties_existingClusterId": {
+			"value": "0113-075944-ah9bbo5z"
+		},
+		"Parametrerized_SQL_properties_typeProperties_server": {
+			"value": "@{linkedService().servername}"
+		},
+		"Parametrerized_SQL_properties_typeProperties_database": {
+			"value": "@{linkedService().database}"
+		},
+		"Parametrerized_SQL_properties_typeProperties_userName": {
+			"value": "rayees"
+		},
+		"SqlServer1_properties_typeProperties_server": {
+			"value": "KRMR"
+		},
+		"SqlServer1_properties_typeProperties_database": {
+			"value": "training"
+		},
+		"SqlServer1_properties_typeProperties_userName": {
+			"value": "Rayees"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
