@@ -943,26 +943,6 @@
 						}
 					},
 					{
-						"name": "Clean Database Pyspark",
-						"type": "DatabricksNotebook",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Clean_Databases"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks1",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
 						"name": "Pyspark Ingestion",
 						"type": "DatabricksNotebook",
 						"dependsOn": [],
@@ -1014,7 +994,7 @@
 						"type": "GetMetadata",
 						"dependsOn": [
 							{
-								"activity": "Clean Database Pyspark",
+								"activity": "Clean database SQL",
 								"dependencyConditions": [
 									"Succeeded"
 								]
