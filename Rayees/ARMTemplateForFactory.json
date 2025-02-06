@@ -95,7 +95,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Clean database SQL",
+						"name": "Clean databases",
 						"type": "DatabricksNotebook",
 						"dependsOn": [],
 						"policy": {
@@ -107,7 +107,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/SQL/tables/1.create_raw_tables"
+							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Increment-Load/create_incremental_database"
 						},
 						"linkedServiceName": {
 							"referenceName": "AzureDatabricks1",
@@ -115,34 +115,7 @@
 						}
 					},
 					{
-						"name": "SQL Ingestion",
-						"type": "DatabricksNotebook",
-						"dependsOn": [
-							{
-								"activity": "Clean database SQL",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/SQL/ingestion/0.ingest_all_files"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks1",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "SQ Transformation",
+						"name": "SQL Transformation",
 						"type": "DatabricksNotebook",
 						"dependsOn": [
 							{
@@ -220,7 +193,7 @@
 						"type": "GetMetadata",
 						"dependsOn": [
 							{
-								"activity": "Clean database SQL",
+								"activity": "Clean databases",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -362,6 +335,53 @@
 						"userProperties": [],
 						"typeProperties": {
 							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Delta/transformation/All-delta-transformation"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks1",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "create databases",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/SQL/ingest_all_databases"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDatabricks1",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "SQL Ingestion",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "create databases",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/SQL/ingestion/0.ingest_all_files"
 						},
 						"linkedServiceName": {
 							"referenceName": "AzureDatabricks1",
