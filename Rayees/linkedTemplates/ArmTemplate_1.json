@@ -29,6 +29,61 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/largedataset_singlefile')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"filename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().filename",
+							"type": "Expression"
+						},
+						"container": "largedataset"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "ID",
+						"type": "String"
+					},
+					{
+						"name": "Name",
+						"type": "String"
+					},
+					{
+						"name": "Age",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "Salary",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/SqlServer1')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -881,7 +936,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Increment-Load/create_incremental_database"
+							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Clean_Databases"
 						},
 						"linkedServiceName": {
 							"referenceName": "AzureDatabricks1",
@@ -889,34 +944,7 @@
 						}
 					},
 					{
-						"name": "SQL Transformation",
-						"type": "DatabricksNotebook",
-						"dependsOn": [
-							{
-								"activity": "SQL Ingestion",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/SQL/transformation/All-sql-transformation"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks1",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "Pyspark Ingestion",
+						"name": "Pyspark Transformation",
 						"type": "DatabricksNotebook",
 						"dependsOn": [],
 						"policy": {
@@ -928,34 +956,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Pyspark/ingestion/0.ingest_all_files"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks1",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "Pyspark Transformation",
-						"type": "DatabricksNotebook",
-						"dependsOn": [
-							{
-								"activity": "Pyspark Ingestion",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Pyspark/transformation/0.transformation"
+							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Pyspark/0.All-transformation"
 						},
 						"linkedServiceName": {
 							"referenceName": "AzureDatabricks1",
@@ -983,7 +984,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataset": {
-								"referenceName": "DelimitedText3",
+								"referenceName": "Incrementload",
 								"type": "DatasetReference",
 								"parameters": {}
 							},
@@ -1019,7 +1020,7 @@
 							},
 							"activities": [
 								{
-									"name": "IngestDelta",
+									"name": "Incrementload",
 									"type": "DatabricksNotebook",
 									"dependsOn": [],
 									"policy": {
@@ -1031,27 +1032,7 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Delta/ingestion/0.ingest_all_files"
-									},
-									"linkedServiceName": {
-										"referenceName": "AzureDatabricks1",
-										"type": "LinkedServiceReference"
-									}
-								},
-								{
-									"name": "IngestIncremental",
-									"type": "DatabricksNotebook",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Increment-Load/ingestion/0.ingest_all_files"
+										"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Increment-Load/0.All-transformation"
 									},
 									"linkedServiceName": {
 										"referenceName": "AzureDatabricks1",
@@ -1062,11 +1043,11 @@
 						}
 					},
 					{
-						"name": "TransIncremental",
+						"name": "SQL",
 						"type": "DatabricksNotebook",
 						"dependsOn": [
 							{
-								"activity": "ForEach1",
+								"activity": "Clean databases",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -1081,7 +1062,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Increment-Load/presentation/0.transformation"
+							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/SQL/0.All-transformation"
 						},
 						"linkedServiceName": {
 							"referenceName": "AzureDatabricks1",
@@ -1089,11 +1070,11 @@
 						}
 					},
 					{
-						"name": "TransDelta",
+						"name": "Delta",
 						"type": "DatabricksNotebook",
 						"dependsOn": [
 							{
-								"activity": "ForEach1",
+								"activity": "Clean databases",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -1108,54 +1089,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Delta/transformation/All-delta-transformation"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks1",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "create databases",
-						"type": "DatabricksNotebook",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/SQL/ingest_all_databases"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks1",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "SQL Ingestion",
-						"type": "DatabricksNotebook",
-						"dependsOn": [
-							{
-								"activity": "create databases",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/SQL/ingestion/0.ingest_all_files"
+							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Delta/0.All-transformation"
 						},
 						"linkedServiceName": {
 							"referenceName": "AzureDatabricks1",
@@ -2514,154 +2448,7 @@
 				"lastPublishTime": "2024-12-24T08:58:47Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SqlServerTable1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ControlFlow_Enabled Column')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Lookup1",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "alltables",
-								"type": "DatasetReference",
-								"parameters": {
-									"tablename": "config"
-								}
-							},
-							"firstRowOnly": false
-						}
-					},
-					{
-						"name": "Filter1",
-						"type": "Filter",
-						"dependsOn": [
-							{
-								"activity": "Lookup1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('Lookup1').output.value",
-								"type": "Expression"
-							},
-							"condition": {
-								"value": "@equals(item().Enabled,1)",
-								"type": "Expression"
-							}
-						}
-					},
-					{
-						"name": "ForEach1",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "Filter1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('Filter1').output.value",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "Copy data1",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "AzureSqlSource",
-											"queryTimeout": "02:00:00",
-											"partitionOption": "None"
-										},
-										"sink": {
-											"type": "SqlServerSink",
-											"writeBehavior": "insert",
-											"sqlWriterUseTableLock": false,
-											"tableOption": "autoCreate"
-										},
-										"enableStaging": false,
-										"translator": {
-											"type": "TabularTranslator",
-											"typeConversion": true,
-											"typeConversionSettings": {
-												"allowDataTruncation": true,
-												"treatBooleanAsNumber": false
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "alltables",
-											"type": "DatasetReference",
-											"parameters": {
-												"tablename": {
-													"value": "@item().Name\n",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "SqlServerTable1",
-											"type": "DatasetReference",
-											"parameters": {
-												"tablename": {
-													"value": "@item().name",
-													"type": "Expression"
-												}
-											}
-										}
-									]
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": [],
-				"lastPublishTime": "2024-12-31T05:55:25Z"
-			},
-			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/largedataset_singlefile')]",
 				"[concat(variables('factoryId'), '/datasets/SqlServerTable1')]"
 			]
 		}

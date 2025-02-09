@@ -107,7 +107,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Increment-Load/create_incremental_database"
+							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Clean_Databases"
 						},
 						"linkedServiceName": {
 							"referenceName": "AzureDatabricks1",
@@ -115,34 +115,7 @@
 						}
 					},
 					{
-						"name": "SQL Transformation",
-						"type": "DatabricksNotebook",
-						"dependsOn": [
-							{
-								"activity": "SQL Ingestion",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/SQL/transformation/All-sql-transformation"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks1",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "Pyspark Ingestion",
+						"name": "Pyspark Transformation",
 						"type": "DatabricksNotebook",
 						"dependsOn": [],
 						"policy": {
@@ -154,34 +127,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Pyspark/ingestion/0.ingest_all_files"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks1",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "Pyspark Transformation",
-						"type": "DatabricksNotebook",
-						"dependsOn": [
-							{
-								"activity": "Pyspark Ingestion",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Pyspark/transformation/0.transformation"
+							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Pyspark/0.All-transformation"
 						},
 						"linkedServiceName": {
 							"referenceName": "AzureDatabricks1",
@@ -209,7 +155,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataset": {
-								"referenceName": "DelimitedText3",
+								"referenceName": "Incrementload",
 								"type": "DatasetReference",
 								"parameters": {}
 							},
@@ -245,7 +191,7 @@
 							},
 							"activities": [
 								{
-									"name": "IngestDelta",
+									"name": "Incrementload",
 									"type": "DatabricksNotebook",
 									"dependsOn": [],
 									"policy": {
@@ -257,27 +203,7 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Delta/ingestion/0.ingest_all_files"
-									},
-									"linkedServiceName": {
-										"referenceName": "AzureDatabricks1",
-										"type": "LinkedServiceReference"
-									}
-								},
-								{
-									"name": "IngestIncremental",
-									"type": "DatabricksNotebook",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Increment-Load/ingestion/0.ingest_all_files"
+										"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Increment-Load/0.All-transformation"
 									},
 									"linkedServiceName": {
 										"referenceName": "AzureDatabricks1",
@@ -288,11 +214,11 @@
 						}
 					},
 					{
-						"name": "TransIncremental",
+						"name": "SQL",
 						"type": "DatabricksNotebook",
 						"dependsOn": [
 							{
-								"activity": "ForEach1",
+								"activity": "Clean databases",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -307,7 +233,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Increment-Load/presentation/0.transformation"
+							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/SQL/0.All-transformation"
 						},
 						"linkedServiceName": {
 							"referenceName": "AzureDatabricks1",
@@ -315,11 +241,11 @@
 						}
 					},
 					{
-						"name": "TransDelta",
+						"name": "Delta",
 						"type": "DatabricksNotebook",
 						"dependsOn": [
 							{
-								"activity": "ForEach1",
+								"activity": "Clean databases",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -334,54 +260,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Delta/transformation/All-delta-transformation"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks1",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "create databases",
-						"type": "DatabricksNotebook",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/SQL/ingest_all_databases"
-						},
-						"linkedServiceName": {
-							"referenceName": "AzureDatabricks1",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "SQL Ingestion",
-						"type": "DatabricksNotebook",
-						"dependsOn": [
-							{
-								"activity": "create databases",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/SQL/ingestion/0.ingest_all_files"
+							"notebookPath": "/Users/cloudtraining4@3ktechnologies.com/FormulaF1-Project/Delta/0.All-transformation"
 						},
 						"linkedServiceName": {
 							"referenceName": "AzureDatabricks1",
@@ -396,7 +275,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks1')]",
-				"[concat(variables('factoryId'), '/datasets/DelimitedText3')]"
+				"[concat(variables('factoryId'), '/datasets/Incrementload')]"
 			]
 		},
 		{
@@ -2987,6 +2866,70 @@
 					"location": {
 						"type": "AzureBlobFSLocation",
 						"folderPath": "raw",
+						"fileSystem": "incremental-load"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "circuitId",
+						"type": "String"
+					},
+					{
+						"name": "circuitRef",
+						"type": "String"
+					},
+					{
+						"name": "name",
+						"type": "String"
+					},
+					{
+						"name": "location",
+						"type": "String"
+					},
+					{
+						"name": "country",
+						"type": "String"
+					},
+					{
+						"name": "lat",
+						"type": "String"
+					},
+					{
+						"name": "lng",
+						"type": "String"
+					},
+					{
+						"name": "alt",
+						"type": "String"
+					},
+					{
+						"name": "url",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Incrementload')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
 						"fileSystem": "incremental-load"
 					},
 					"columnDelimiter": ",",
